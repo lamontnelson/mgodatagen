@@ -1,4 +1,4 @@
-module github.com/feliixx/mgodatagen
+module github.com/lamontnelson/mgodatagen
 
 go 1.13
 
