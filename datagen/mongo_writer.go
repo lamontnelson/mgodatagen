@@ -382,7 +382,7 @@ func (w *mongoWriter) ensureIndex(coll *Collection) error {
 		return fmt.Errorf("error while dropping index for collection '%s'\n  cause: %v", coll.Name, err)
 	}
 	// avoid timeout when building indexes
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 24*time.Hour)
 	defer cancel()
 
 	models := make([]mongo.IndexModel, len(coll.Indexes))
