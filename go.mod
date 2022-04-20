@@ -15,4 +15,4 @@ require (
 	go.mongodb.org/mongo-driver v1.8.4
 )
 
-replace github.com/feliixx/mgodatagen => github.com/lamontnelson/mgodatagen master
+replace github.com/feliixx/mgodatagen => github.com/lamontnelson/mgodatagen v0.0.0 
