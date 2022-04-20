@@ -14,3 +14,5 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	go.mongodb.org/mongo-driver v1.8.4
 )
+
+replace github.com/feliixx/mgodatagen => github.com/lamontnelson/mgodatagen master
