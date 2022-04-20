@@ -29,6 +29,7 @@ type mongoWriter struct {
 	version    []int
 	indexFirst bool
 	indexOnly  bool
+	skipIndex  bool
 	append     bool
 	numWorker  int
 }
@@ -53,6 +54,7 @@ func newMongoWriter(options *Options, logger io.Writer) (writer, error) {
 		indexOnly:  options.IndexOnly,
 		append:     options.Append,
 		numWorker:  options.NumInsertWorker,
+		skipIndex:  options.SkipIndex,
 	}, nil
 }
 
@@ -375,6 +377,10 @@ func (w *mongoWriter) ensureIndex(coll *Collection) error {
 		return nil
 	}
 
+	if w.skipIndex {
+		return nil
+	}
+
 	c := w.session.Database(coll.DB).Collection(coll.Name)
 
 	_, err := c.Indexes().DropAll(context.Background())
@@ -382,7 +388,7 @@ func (w *mongoWriter) ensureIndex(coll *Collection) error {
 		return fmt.Errorf("error while dropping index for collection '%s'\n  cause: %v", coll.Name, err)
 	}
 	// avoid timeout when building indexes
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 24*time.Hour)
 	defer cancel()
 
 	models := make([]mongo.IndexModel, len(coll.Indexes))

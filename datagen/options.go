@@ -28,6 +28,7 @@ type Configuration struct {
 	Append          bool   `short:"a" long:"append" description:"if present, append documents to the collection without\n removing older documents or deleting the collection"`
 	IndexOnly       bool   `short:"i" long:"indexonly" description:"if present, mgodatagen will just try to rebuild index"`
 	IndexFirst      bool   `short:"x" long:"indexfirst" description:"if present, mgodatagen will create index before\n inserting documents"`
+	SkipIndex       bool   `short:"z" long:"skipIndex" description:"skip building indexes"`
 	NumInsertWorker int    `short:"n" long:"numWorker" value-name:"<nb>" description:"number of concurrent workers inserting documents\n in database. Default is number of CPU"`
 	BatchSize       int    `short:"b" long:"batchsize" value-name:"<size>" description:"bulk insert batch size" default:"1000"`
 	Seed            uint64 `short:"s" long:"seed" value-name:"<seed>" description:"specific seed to use. Passing the same seed garentees\n the same output for evey run with the same config.\n Has to be in [1, 18446744073709551615]"`
