@@ -159,15 +159,15 @@ func (w *mongoWriter) generate(collection *Collection) error {
 
 // create a collection with specific options
 func (w *mongoWriter) createCollection(coll *Collection) error {
-	c := w.session.Database(coll.DB).Collection(coll.Name)
+	//c := w.session.Database(coll.DB).Collection(coll.Name)
 
 	if w.append || w.indexOnly {
 		return nil
 	}
-	err := c.Drop(context.Background())
-	if err != nil {
-		return fmt.Errorf("fail to drop collection '%s'\ncause  %v", coll.Name, err)
-	}
+	//err := c.Drop(context.Background())
+	//#if err != nil {
+	//#	return fmt.Errorf("fail to drop collection '%s'\ncause  %v", coll.Name, err)
+	//#}
 
 	createCommand := bson.D{
 		bson.E{Key: "create", Value: coll.Name},
@@ -175,7 +175,7 @@ func (w *mongoWriter) createCollection(coll *Collection) error {
 	if coll.CompressionLevel != "" {
 		createCommand = append(createCommand, bson.E{Key: "storageEngine", Value: bson.M{"wiredTiger": bson.M{"configString": "block_compressor=" + coll.CompressionLevel}}})
 	}
-	err = w.session.Database(coll.DB).RunCommand(context.Background(), createCommand).Err()
+	err := w.session.Database(coll.DB).RunCommand(context.Background(), createCommand).Err()
 	if err != nil {
 		return fmt.Errorf("coulnd't create collection with compression level '%s'\n  cause: %v", coll.CompressionLevel, err)
 	}
@@ -383,11 +383,6 @@ func (w *mongoWriter) ensureIndex(coll *Collection) error {
 
 	c := w.session.Database(coll.DB).Collection(coll.Name)
 
-	_, err := c.Indexes().DropAll(context.Background())
-	if err != nil {
-		return fmt.Errorf("error while dropping index for collection '%s'\n  cause: %v", coll.Name, err)
-	}
-	// avoid timeout when building indexes
 	ctx, cancel := context.WithTimeout(context.Background(), 24*time.Hour)
 	defer cancel()
 
@@ -395,8 +390,9 @@ func (w *mongoWriter) ensureIndex(coll *Collection) error {
 	for i, index := range coll.Indexes {
 		models[i] = index.ConvertToIndexModel()
 	}
+        opts := options.CreateIndexes().SetCommitQuorumInt(0)
 
-	_, err = c.Indexes().CreateMany(ctx, models)
+	_, err := c.Indexes().CreateMany(ctx, models,opts)
 	if err != nil {
 		return fmt.Errorf("error while building indexes for collection '%s'\n cause: %v", coll.Name, err)
 	}
